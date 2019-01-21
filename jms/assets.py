@@ -65,11 +65,15 @@ class AssetsMixin:
         else:
             return None
 
-    def get_system_user_auth_info(self, system_user):
-        """获取系统用户的认证信息: 密码, ssh私钥"""
+    def get_system_user_auth_info(self, system_user, asset=None):
+        """获取系统用户的认证信息: 密码, ssh私钥(直接获取或从AuthBook获取)"""
         try:
-            resp = self.http.get('system-user-auth-info',
-                                 pk=system_user.id)
+            if asset is None:
+                resp = self.http.get('system-user-auth-info',
+                                     pk=system_user.id)
+            else:
+                resp = self.http.get('system-user-asset-auth-info',
+                                     pk=(system_user.id, asset.id))
         except (RequestError, ResponseError):
             return None, None
 
